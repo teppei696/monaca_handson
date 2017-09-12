@@ -1,0 +1,138 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta http-equiv="Content-Security-Policy" content="default-src * data:; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">
+    <script src="components/loader.js"></script>
+    <script src="lib/onsenui/js/onsenui.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?sensor=false&key=AIzaSyD_TIGZ9AP3RwKE28XkHG76XXTjwmPJ6YI" type="text/javascript"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" type="text/javascript" ></script>
+
+    <link rel="stylesheet" href="components/loader.css">
+    <link rel="stylesheet" href="lib/onsenui/css/onsenui.css">
+    <link rel="stylesheet" href="lib/onsenui/css/onsen-css-components.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <script>
+        var map;
+
+        function init() {
+            //福井県庁舎の位置
+            var lat = 36.0652433;
+            var lng = 136.2194966;
+
+            if (navigator.geolocation) {
+                // 現在の位置情報取得
+                navigator.geolocation.getCurrentPosition(
+                    function(pos) {
+                        lat = pos.coords.latitude;
+                        lng = pos.coords.longitude;
+                        init_map(lat, lng);
+                    },
+                    function() {
+                        init_map(lat, lng);
+                    }
+                );
+            } else {
+                init_map(lat, lng);
+            }
+
+        }
+
+        function init_map(lat, lng) {
+            var mapOptions = {
+                //中心地設定
+                center: new google.maps.LatLng(lat, lng),
+                //ズーム設定
+                zoom: 15,
+                //地図のタイプを指定
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+
+            map = new google.maps.Map(document.getElementById("map_canvas"),mapOptions);
+            getWindowSize();
+            init_info();
+        }
+
+        function getWindowSize() {
+            var sW,sH;
+            sW = window.innerWidth;
+            sH = window.innerHeight;
+            document.getElementById("map_canvas").style.height = (sH - 113) + 'px';
+        }
+
+        function init_info() {
+            var info_canvas = document.getElementById("info_canvas");
+            info_canvas.innerHTML = "TEST";
+
+            //Ajax通信
+            $.ajax({
+                type: 'GET',
+                url: './aed.json',
+                dataType: 'json',
+                success: function(json){
+                    var len = json.length;
+                    info_canvas.innerHTML = "AED数 " + json.length;
+                    for(var i=0; i < len; i++){
+                        pos = {
+                            lat: json[i][2],
+                            lng: json[i][3]
+                        };
+                        marker = new google.maps.Marker({
+                            position: pos,
+                            map: map
+                        });
+                    }
+                },
+                //エラー処理
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    alert(textStatus);
+                }
+            });
+        }
+
+        ons.ready(function() {
+            console.log("Onsen UI is ready!");
+        });
+    </script>
+
+
+</head>
+<body onload="init();">
+
+    <ons-tabbar>
+      <ons-tab label="マップ" page="tab1.html" active>
+      </ons-tab>
+      <ons-tab label="情報" page="tab2.html">
+      </ons-tab>
+    </ons-tabbar>
+
+    <ons-template id="tab1.html">
+      <ons-page>
+        <ons-toolbar>
+          <div class="center" onclick="init();">福井県AEDマップ</div>
+        </ons-toolbar>
+
+        <div id="map_canvas"></div>
+
+      </ons-page>
+    </ons-template>
+
+    <ons-template id="tab2.html">
+      <ons-page>
+        <ons-toolbar>
+          <div class="center">情報</div>
+        </ons-toolbar>
+
+        <p>
+          このアプリは以下のサイトの情報を利用しています。<br />
+          <div onclick="window.open('http://www.pref.fukui.lg.jp/doc/toukei-jouhou/opendata/','_system');">http://www.pref.fukui.lg.jp/doc/toukei-jouhou/opendata/</div>
+        </p>
+
+        <div id="info_canvas" name="info_canvas">情報表示</div>
+
+      </ons-page>
+    </ons-template>
+</body>
+</html>
