@@ -86,6 +86,7 @@
                             icon: image
                         });
                         if (json[i][8] == '24時間対応') {
+                            // 24時間対応のAEDの時は半径100mの透明な円を描画する
                             circle = new google.maps.Circle({
                                 strokeColor: '#FF0000',
                                 strokeOpacity: 0.8,
