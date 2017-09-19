@@ -131,24 +131,23 @@
 
         function set_quiz() {
             var str = document.getElementById("5374_question");
+            var html = document.getElementById("5374_falsehood");
             str.innerHTML = "TEST";
+            html.innerHTML = "";
             var random = Math.floor(Math.random() * quiz.length);
             question = quiz[random][1];
-            console.log(question);
             answer = quiz[random][0];
-            console.log(answer);
             str.innerHTML = question + " は なにゴミでしょうか？";
         }
 
         function setAnswer(str) {
-            var str = document.getElementById("5374_falsehood");
+            var html = document.getElementById("5374_falsehood");
             str.innerHTML = "・・・";
             if (str == answer) {
-                str.innerHTML = '★正解★';
+                html.innerHTML = '★正解★';
             } else {
-                str.innerHTML = '残念 不正解　正解は「' + answer + '」です';
+                html.innerHTML = '残念 不正解　正解は「' + answer + '」です';
             }
-            console.log(str);
         }
 
         ons.ready(function() {
