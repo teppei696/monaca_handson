@@ -16,7 +16,9 @@
 
     <script>
         var map;
-
+        var quiz;
+        var question;
+        var answer;
         function init() {
             //しあわせの村の位置(34.70866857196943、135.11552810668945)
             var lat = 34.70866857196943;
@@ -53,6 +55,7 @@
             map = new google.maps.Map(document.getElementById("map_canvas"),mapOptions);
             getWindowSize();
             init_info();
+            init_quiz();
         }
 
         function getWindowSize() {
@@ -107,6 +110,47 @@
             });
         }
 
+        function init_quiz() {
+
+            //Ajax通信
+            $.ajax({
+                type: 'GET',
+                url: './kobe_target.json',
+                dataType: 'json',
+                success: function(json){
+                    quiz = json;
+                    set_quiz();
+                },
+                //エラー処理
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    alert(textStatus);
+                }
+            });
+        }
+
+
+        function set_quiz() {
+            var str = document.getElementById("5374_question");
+            str.innerHTML = "TEST";
+            var random = Math.floor(Math.random() * quiz.length);
+            question = quiz[random][1];
+            console.log(question);
+            answer = quiz[random][0];
+            console.log(answer);
+            str.innerHTML = question + " は なにゴミでしょうか？";
+        }
+
+        function setAnswer(str) {
+            var str = document.getElementById("5374_falsehood");
+            str.innerHTML = "・・・";
+            if (str == answer) {
+                str.innerHTML = '★正解★';
+            } else {
+                str.innerHTML = '残念 不正解　正解は「' + answer + '」です';
+            }
+            console.log(str);
+        }
+
         ons.ready(function() {
             console.log("Onsen UI is ready!");
         });
@@ -120,6 +164,8 @@
       <ons-tab label="マップ" page="tab1.html" active>
       </ons-tab>
       <ons-tab label="情報" page="tab2.html">
+      </ons-tab>
+      <ons-tab label="クイズ" page="tab3.html">
       </ons-tab>
     </ons-tabbar>
 
@@ -147,6 +193,26 @@
 
         <div id="info_canvas" name="info_canvas">情報表示</div>
 
+      </ons-page>
+    </ons-template>
+    <ons-template id="tab3.html">
+      <ons-page>
+        <ons-toolbar>
+            <div class="center">5374クイズ</div>
+        </ons-toolbar>
+        <div style="margin: 5px;"><ons-button id="5374_btn_start" onclick="set_quiz()">次へ</ons-button></div>
+        <div id="5374_question" style="margin: 10px;">問題文</div>
+        <div id="5374_choice">
+            <div style="margin: 5px;"><ons-button id="5374_desc_1" modifier="outline" onclick="setAnswer('缶・びん・ペットボトル')">缶・びん・ペットボトル</ons-button></div>
+            <div style="margin: 5px;"><ons-button id="5374_desc_2" modifier="outline" onclick="setAnswer('容器包装プラスチック')">容器包装プラスチック</ons-button></div>
+            <div style="margin: 5px;"><ons-button id="5374_desc_3" modifier="outline" onclick="setAnswer('大型ごみ')">大型ごみ</ons-button>
+            <ons-button id="5374_desc_4" modifier="outline" onclick="setAnswer('燃えないごみ')">燃えないごみ</ons-button></div>
+            <div style="margin: 5px;"><ons-button id="5374_desc_5" modifier="outline" onclick="setAnswer('カセットボンベ・スプレー缶')">カセットボンベ・スプレー缶</ons-button></div>
+            <div style="margin: 5px;"><ons-button id="5374_desc_6" modifier="outline" onclick="setAnswer('燃えるごみ')">燃えるごみ</ons-button>
+            <ons-button id="5374_desc_7" modifier="outline" onclick="setAnswer('資源集団回収')">資源集団回収</ons-button></div>
+            <div style="margin: 5px;"><ons-button id="5374_desc_8" modifier="outline" onclick="setAnswer('収集しない')">収集しない</ons-button></div>
+        </div>
+        <div id="5374_falsehood" style="margin: 5px;"></div>
       </ons-page>
     </ons-template>
 </body>
