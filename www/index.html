@@ -56,6 +56,7 @@
             getWindowSize();
             init_info();
             init_quiz();
+            setChoice();
         }
 
         function getWindowSize() {
@@ -110,8 +111,9 @@
             });
         }
 
+        // 5374クイズ
+        //   クイズ問題取得
         function init_quiz() {
-
             //Ajax通信
             $.ajax({
                 type: 'GET',
@@ -127,8 +129,7 @@
                 }
             });
         }
-
-
+        //   クイズ出題
         function set_quiz() {
             var str = document.getElementById("5374_question");
             var html = document.getElementById("5374_falsehood");
@@ -139,7 +140,7 @@
             answer = quiz[random][0];
             str.innerHTML = question + " は なにゴミでしょうか？";
         }
-
+        //   正解判定
         function setAnswer(str) {
             var html = document.getElementById("5374_falsehood");
             str.innerHTML = "・・・";
@@ -148,6 +149,30 @@
             } else {
                 html.innerHTML = '残念 不正解　正解は「' + answer + '」です';
             }
+        }
+        //   選択肢セット
+        function setChoice() {
+            var parent_node = document.getElementById("5374_choice");
+
+            //Ajax通信
+            $.ajax({
+                type: 'GET',
+                url: './kobe_description.json',
+                dataType: 'json',
+                success: function(json){
+                    var len = json.length;
+                    for(var i=0; i < len; i++){
+                        var div = document.createElement('div');
+                        div.innerHTML = "<ons-button modifier='outline' style='margin: 5px;' onclick='setAnswer(\"" + json[i][0] + "\")'>" + json[i][0] + "</ons-button>";
+                        parent_node.appendChild(div);
+                        console.log(div.innerHTML);
+                    }
+                },
+                //エラー処理
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    alert(textStatus);
+                }
+            });
         }
 
         ons.ready(function() {
@@ -202,14 +227,6 @@
         <div style="margin: 5px;"><ons-button id="5374_btn_start" onclick="set_quiz()">次へ</ons-button></div>
         <div id="5374_question" style="margin: 10px;">問題文</div>
         <div id="5374_choice">
-            <div style="margin: 5px;"><ons-button id="5374_desc_1" modifier="outline" onclick="setAnswer('缶・びん・ペットボトル')">缶・びん・ペットボトル</ons-button></div>
-            <div style="margin: 5px;"><ons-button id="5374_desc_2" modifier="outline" onclick="setAnswer('容器包装プラスチック')">容器包装プラスチック</ons-button></div>
-            <div style="margin: 5px;"><ons-button id="5374_desc_3" modifier="outline" onclick="setAnswer('大型ごみ')">大型ごみ</ons-button>
-            <ons-button id="5374_desc_4" modifier="outline" onclick="setAnswer('燃えないごみ')">燃えないごみ</ons-button></div>
-            <div style="margin: 5px;"><ons-button id="5374_desc_5" modifier="outline" onclick="setAnswer('カセットボンベ・スプレー缶')">カセットボンベ・スプレー缶</ons-button></div>
-            <div style="margin: 5px;"><ons-button id="5374_desc_6" modifier="outline" onclick="setAnswer('燃えるごみ')">燃えるごみ</ons-button>
-            <ons-button id="5374_desc_7" modifier="outline" onclick="setAnswer('資源集団回収')">資源集団回収</ons-button></div>
-            <div style="margin: 5px;"><ons-button id="5374_desc_8" modifier="outline" onclick="setAnswer('収集しない')">収集しない</ons-button></div>
         </div>
         <div id="5374_falsehood" style="margin: 5px;"></div>
       </ons-page>
