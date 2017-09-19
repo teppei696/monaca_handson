@@ -1,0 +1,9 @@
+label,sublabel,description,styles,bgcolor,icon
+缶・びん・ペットボトル,,,img/wake-3.svg,#2980b9,img/pet.svg
+容器包装プラスチック,,,img/wake-1.svg,#f39c12,img/pura.svg
+大型ごみ,,,,#2c3e50,
+燃えないごみ,,,img/wake-2.svg,#16a085,img/koware.svg
+カセットボンベ・スプレー缶,,,img/wake-4.svg,#1abc9c,img/gas.svg
+燃えるごみ,,,img/wake-0.svg,#c0392b,img/moeru.svg
+資源集団回収,,,img/wake-5.svg,#e80012,img/paper.svg
+収集しない,,,,#7f8c8d,
